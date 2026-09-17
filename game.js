@@ -57,9 +57,11 @@
 //      let ball = { x: 150, y: 200, vx: 0, vy: 0 };
 
 
-
-
-
+ // let ball = { x: 250, y: 40, vx: 0, vy: 0 };
+let ball = { x: 35, y: 60, vx: 0, vy: 0 };
+ let goal = { x:45,y:330,r:22};
+ let cleared =false;
+let startTime = Date.now();
 // ------------------------------------------------------------
 //  STEP 2   描画する
 // ------------------------------------------------------------
@@ -74,7 +76,139 @@
 
 
 
+    function update() {
+          ball.vx = ball.vx + tilt.x * 0.5;
+     ball.vy = ball.vy + tilt.y * 0.5;
 
+      ball.vx = ball.vx * 0.98;
+      ball.vy = ball.vy * 0.98;
+
+     // ball.x = ball.x + ball.vx;
+    //  ball.y = ball.y + ball.vy;
+      
+      if (ball.x < 12) {
+     ball.x = 12; 
+     ball.vx = -ball.vx;
+     }
+     
+     
+     if (ball.y < 15) {
+     ball.y = 15; 
+     ball.vy = -ball.vy;
+     }
+     if (ball.x > 286) {
+     ball.x = 286; 
+     ball.vx = -ball.vx;
+     }
+     if (ball.y > 388) {
+     ball.y = 388; 
+     ball.vy = -ball.vy;
+     }
+    
+      drawBall(ball.x, ball.y);
+      drawGoal(goal.x, goal.y, goal.r);
+
+     for (let i=0;i<walls.length;i++){
+      drawWall(walls[i].x,walls[i].y,walls[i].w,walls[i].h);
+
+     }
+
+     let prevX=ball.x;
+     ball.x=ball.x+ball.vx;
+     if (hitWall()){
+     ball.x=prevX;
+     ball.vx=-ball.vx*0.5;
+     }
+
+     let prevY=ball.y;
+     ball.y=ball.y+ball.vy;
+     if (hitWall()){
+     ball.y=prevY;
+     ball.vy=-ball.vy*0.5;
+     }
+
+      
+
+
+ let dx =ball.x - goal.x;
+ let dy=ball.y - goal.y;
+ let dist = Math.sqrt(dx*dx+dy*dy);
+
+ 
+
+if (dist < goal.r){
+  cleared = true;
+  document.getElementById("message")
+  .textContent = "CLEAR";
+ }
+
+
+ if (cleared) {
+    document.getElementById("message").textContent = "CLEAR";
+  } 
+//ここの下に以下を追加
+else {
+    let sec = (Date.now() - startTime) / 1000; //今の時刻から開始時刻を引き、ミリ秒を秒に変換
+    document.getElementById("timer").textContent = sec.toFixed(1);//小数第1位に丸め、テキストを更新
+  }
+}
+  let walls = [
+   /// {x:-20,y:120,w:230,h:12},
+   // /{x:90,y:250,w:230,h:12},
+
+  //   { x: 90,  y: 150, w: 16,  h: 80 }, // 下にのびる縦の壁
+  
+   // 3段目の仕切り（中央エリアのクランク）
+   //{ x: 12,  y: 230, w: 100, h: 12 }, // 左からのばす壁
+   //{ x: 160, y: 230, w: 126, h: 12
+   // }, // 右からのばす壁
+   //{ x: 160, y: 230, w: 12,  h: 60 }, // 下にのびる縦の壁
+   
+    // 4段目の仕切り（ゴール手前の障害物）
+   //{ x: 12,  y: 290, w: 90,  h: 12 }, // 左からのばす壁（この下にゴール x:45, y:330 があります）
+   //{ x: 100, y: 290, w: 12,  h: 60 },
+   // { x: 50, y: 50, w: 60,  h: 12 }
+  { x: 20,  y: 40,  w: 40, h: 14 },
+  { x: 40,  y: 40,  w: 14, h: 40 },
+  { x: 80,  y: 0,  w: 14, h:60  },
+  { x: 120,  y: 20,  w: 14, h:70  },
+  { x: 0,  y: 75,  w: 140, h: 14 }, 
+  { x: 0,  y: 105, w: 90,  h: 14 },//左短い棒nofukusei
+  { x: 0,  y: 155, w: 90,  h: 14 },
+  { x: 170, y: 75,  w: 116, h: 14 },
+  { x: 150, y: 0,  w: 14,  h: 140 }, // 上からの縦壁（罠）
+
+  // 【2段目】長い一本道に見せかけた、中央の細い縦穴ルート
+  { x: 30,  y: 130, w: 210, h: 14 },//二段目長い棒
+ // { x: 60,  y: 130, w: 14,  h: 50 },
+  { x: 120, y: 110, w: 14,  h: 70 },//tukidasiteru
+
+  // 【3段目】右端で行き止まりになるダミールートと、左へ進むジグザグ
+  { x: 25,  y: 180, w: 180, h: 14 },//短いmigi棒の横の長い棒
+  { x: 230, y: 180, w: 50,  h: 14 },//右短い棒
+  { x: 150, y: 155, w: 120,  h: 14 },//右短いのの上
+  { x: 0,  y: 210, w: 60,  h: 14 },//左短い棒
+  { x: 105, y: 230, w: 190, h: 14 },//短い棒の下
+  { x: 105, y: 230, w: 14,  h: 50 }, // 通路を狭くする縦壁
+
+  // 【4段目】ゴール直前！右へ大きく迂回させる大回りの罠
+  { x: 12,  y: 280, w: 230, h: 14 }, 
+   { x: 90,  y: 280, w: 14,  h: 80 }, // ゴールの右を完全に塞ぐ縦壁
+  { x: 12,  y: 355, w: 80,  h: 14 } 
+
+  ];
+    
+  function hitWall(){
+      for(let i=0; i<walls.length; i++){
+        let w = walls[i];
+        if(ball.x>w.x&&ball.x<w.x+w.w&&
+          ball.y>w.y&&ball.y<w.y+w.h){
+            return true;
+
+          }
+      }
+      return false;
+  }
 
 // ------------------------------------------------------------
 //  STEP 3   位置を更新する
@@ -151,7 +285,6 @@
 //  符号の反転は  ball.vx = -ball.vx;
 //
 //  確認: 左へ転がすと壁で跳ね返る。
-
 
 
 

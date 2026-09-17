@@ -90,7 +90,7 @@
 #ball{
     width: 20px;
     height: 20px;
-    background: rgb(255, 255, 255)
+    background: #ffffff
 }
   
 
@@ -117,7 +117,11 @@
     
 
 }
-
+#message {
+    font-size:32px;
+    color:#ffffff;
+    
+}
 
 
 /* ============================================================
